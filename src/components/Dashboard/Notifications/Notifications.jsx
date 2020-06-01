@@ -11,6 +11,8 @@ import { getHeaders } from "../../../utils/headers";
 
 const color = "#229a88";
 const url = Api.BASE_URL + Api.NOTIFICATIONS_LIST;
+const markAsReadUrl = Api.BASE_URL + Api.MARK_AS_READ;
+const markAllAsReadUrl = Api.BASE_URL + Api.MARK_ALL_AS_READ;
 
 class Notifications extends Component {
     state = {
@@ -20,6 +22,38 @@ class Notifications extends Component {
         previous: null,
         count: 0,
         error: ""
+    }
+
+    markAllAsRead = () => {
+        const headers = getHeaders();
+
+        axios
+        .post(markAllAsReadUrl, {}, headers)
+        .then(res => this.setState({error: ""}, () => {
+            if(this.state.next) 
+                this.fetchNotificationsList(this.state.next)
+            else if(this.state.previous)
+                this.fetchNotificationsList(this.state.previous)
+            else
+                this.fetchNotificationsList(url)
+        }))
+        .catch(err => this.setState({isLoading: false}))
+    }
+
+    markAsRead = (uri) => {
+        const headers = getHeaders();
+
+        axios
+        .post(markAsReadUrl + `${uri}/`, {}, headers)
+        .then(res => this.setState({error: ""}, () => {
+            if(this.state.next) 
+                this.fetchNotificationsList(this.state.next)
+            else if(this.state.previous)
+                this.fetchNotificationsList(this.state.previous)
+            else
+                this.fetchNotificationsList(url)
+        }))
+        .catch(err => this.setState({isLoading: false}))
     }
 
     fetchNotificationsList = (notificationsURL) => {
@@ -63,8 +97,10 @@ class Notifications extends Component {
                     }
                     {!this.state.isLoading ? 
                     <div style={{ borderRadius: 10, marginRight: "20px", marginLeft: "10px"}}>
+                    {this.state.notifications.length > 0 && <Button size="sm" variant="success" style={{fontSize: "12px", marginBottom: "10px"}}>Mark All As Read</Button>}
+
                     {this.state.notifications.map(item =>
-                    <div key={item.id} className="ma0 pa0 v-top dib Cards" style={{cursor: "pointer", background:  "white", width: "100%", borderBottom: "0.5px solid #eee"}}>
+                    <div key={item.id} onClick={this.markAsRead(item.uri)} className="ma0 pa0 v-top dib Cards" style={{cursor: "pointer", background:  "white", width: "100%", borderBottom: "0.5px solid #eee"}}>
                         {item.seen && <Badge variant="danger" size="sm" style={{width: "10px", position: "absolute", marginTop: "5px", height: "10px",borderRadius: "50%", marginLeft: "5px"}}>{" "}</Badge>}
                         <div className="ma2 pa0 dib v-top" style={{overflowX: "auto"}}>
                             <table>

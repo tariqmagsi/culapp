@@ -1,0 +1,98 @@
+@font-face {
+  font-family: product-sans;
+  src: url("../fonts/font/product-sans/Product Sans Bold.ttf");
+}
+@font-face {
+  font-family: product-sans-regular;
+  src: url("../fonts/font/product-sans/Product Sans Regular.ttf");
+}
+@font-face {
+  font-family: madelyn;
+  src: url("../fonts/madelyn/Madelyn.otf");
+}
+
+#culapp {
+  font-family: madelyn;
+}
+.start {
+  margin-top: 70px;
+  text-align: center;
+}
+
+.terms div,
+li {
+  font-family: product-sans-regular !important;
+}
+.home {
+  display: flex;
+  height: 110vh;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+  margin-bottom: -37vh;
+  margin-top: -37vh;
+  text-align: center;
+}
+.home h1 {
+  font-size: 60px;
+}
+
+.cursor {
+  display: inline-block;
+  position: relative;
+}
+
+.footer {
+  background: #0add96;
+  width: 100%;
+  display: flex;
+  justify-items: center;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  font-family: "SF Text";
+  padding-bottom: 50px;
+  box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.05);
+}
+.line {
+  height: 9px;
+  width: 90px;
+  background: black;
+  border-radius: 4.5px;
+  margin: 25px;
+  opacity: 0.2;
+  text-align: center;
+}
+.navbar li {
+  display: inline;
+  list-style: none;
+
+  cursor: pointer;
+  font-size: 18px;
+}
+.navbar li:hover {
+  border-bottom: 1px solid black;
+}
+.avatars li {
+  display: inline;
+  list-style: none;
+
+  cursor: pointer;
+}
+#avatar-li {
+  margin-left: 16px;
+}
+.avatars span {
+  font-size: 14px;
+}
+.copyrights {
+  padding: 10px 20px 10px 20px;
+  font-size: 0.85em;
+  background: #0bc084;
+  border-radius: 100px;
+  color: #0fa06f;
+}

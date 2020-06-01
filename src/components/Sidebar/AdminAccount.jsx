@@ -6,14 +6,13 @@ import Api from "../../Api/Api.json"
 import { refreshToken } from "../../PrivateRoute/isLogin";
 import { getHeaders } from "../../utils/headers";
 import ReactLiveSearch from './ReactLiveSearch'
+import img from '../../image/user.png'
 
 const color = "#229a88"
 const url = Api.BASE_URL + Api.CREATE_ADMIN_REQUEST;
 const searchUniversitiesUrl = Api.BASE_URL + Api.SEARCH_UNIVERSITIES 
 const searchOrganizationsUrl = Api.BASE_URL + Api.SEARCH_ORGANIZATIONS 
 const searchBusinessUrl = Api.BASE_URL + Api.SEARCH_BUSINESS 
-const searchUsersUrl = Api.BASE_URL + Api.SEARCH_USERS 
-const createAdminUrl = Api.BASE_URL + Api.CREATE_ADMIN_ACCOUNT
 
 export default class AdminAccount extends Component {
     state = {    
@@ -22,7 +21,6 @@ export default class AdminAccount extends Component {
         organization: "",
         admin_type: "",
         privilege: "",
-        user: "",
         success: "",
         error: "",
         searches: [],
@@ -35,31 +33,18 @@ export default class AdminAccount extends Component {
         this.setState({[name]: value})
     }
 
-    searchUsers = () => {
-        const headers = getHeaders();
-
-        axios
-        .get(searchUsersUrl + `?q=${this.state.user}`, headers)
-        .then(res => this.setState({ users: res.data.results.map((result, i) => ({ label: result.username, value: result.username})) }))
-        .catch(err => {
-            if(err.response) {
-                if(err.response.data.length > 0) {
-                    this.setState({error: err.response.data[0]})
-                } else {
-                    this.setState({error: "Something went wrong"})
-                }
-            } else {
-                this.setState({error: "Something went wrong"})
-            }
-        })
-    }
-
     searchUniversities = () => {
         const headers = getHeaders();
 
         axios
         .get(searchUniversitiesUrl + `?q=${this.state.university}`, headers)
-        .then(res => this.setState({ searches: res.data.results.map((result, i) => ({ label: result.username, value: result.username})) }))
+        .then(res => this.setState({ searches: res.data.results.map((result, i) => ({ 
+            label: <div>
+                    {result.profile_photo ? <img src={result.profile_photo} style={{ width: "30px", height: "30px"}} alt="search"/> : 
+                    <img src={img} style={{ width: "30px", height: "30px"}} alt="search"/>}
+                    <span style={{marginLeft: "10px"}}>{result.name + " (" + result.username + ") "}</span>
+                   </div>, 
+            value: result.username})) }))
         .catch(err => {
             if(err.response) {
                 if(err.response.data.length > 0) {
@@ -78,7 +63,12 @@ export default class AdminAccount extends Component {
 
         axios
         .get(searchOrganizationsUrl + `?q=${this.state.organization}`, headers)
-        .then(res => this.setState({ searches: res.data.results.map((result, i) => ({ label: result.username, value: result.username})) }, () => console.log(res.data)))
+        .then(res => this.setState({ searches: res.data.results.map((result, i) => ({ label: 
+            <div>
+            {result.profile_photo ? <img src={result.profile_photo} style={{ width: "30px", height: "30px"}} alt="search"/> : 
+            <img src={img} style={{ width: "30px", height: "30px"}} alt="search"/>}
+            <span style={{marginLeft: "10px"}}>{result.name + " (" + result.username + ") "}</span>
+           </div>, value: result.username})) }, () => console.log(res.data)))
         .catch(err => {
             if(err.response) {
                 if(err.response.data.length > 0) {
@@ -97,7 +87,12 @@ export default class AdminAccount extends Component {
 
         axios
         .get(searchBusinessUrl + `?q=${this.state.business}`, headers)
-        .then(res => this.setState({ searches: res.data.results.map((result, i) => ({ label: result.username, value: result.username})) }))
+        .then(res => this.setState({ searches: res.data.results.map((result, i) => ({ label: 
+            <div>
+            {result.profile_photo ? <img src={result.profile_photo} style={{ width: "30px", height: "30px"}} alt="search"/> : 
+            <img src={img} style={{ width: "30px", height: "30px"}} alt="search"/>}
+            <span style={{marginLeft: "10px"}}>{result.name + " (" + result.username + ") "}</span>
+           </div>, value: result.username})) }))
         .catch(err => {
             if(err.response) {
                 if(err.response.data.length > 0) {
@@ -111,7 +106,8 @@ export default class AdminAccount extends Component {
         })
     }
 
-    createAdmin = () => {
+    formSubmit = (e) => {
+        e.preventDefault();
         refreshToken()
         this.setState({isSubmitting: true}, () => {
             const headers = getHeaders();
@@ -121,8 +117,6 @@ export default class AdminAccount extends Component {
                 business: this.state.business,
                 organization: this.state.organization,
                 privilege: this.state.privilege.trim() !== "" ? parseInt(this.state.privilege) : 0,
-                user: this.state.user,
-                admin_type: this.state.admin_type
             }
 
             var temp = Object.assign({}, data);
@@ -139,24 +133,22 @@ export default class AdminAccount extends Component {
             }
 
             axios
-            .post(createAdminUrl, temp, headers)
+            .post(url, temp, headers)
             .then(res => this.setState({
-                        isSubmitting: false, 
-                        error: "", 
-                        success: "Form submitted successfully",
-                        university: "",
-                        business: "",
-                        organization: "",
-                        admin_type: "",
-                        privilege: "",
-                        user: "", 
-                        users: []
+                isSubmitting: false, 
+                error: "", 
+                success: "Form submitted successfully",
+                university: "",
+                business: "",
+                organization: "",
+                admin_type: "",
+                privilege: "",
+                user: "", 
+                users: []
             }))
             .catch(err => this.setState({isSubmitting: false, success: ""},() => {
-                console.log(err.response.data)
                 if(err.response) {
-                    if(err.response.data)
-                        this.setState({error: err.response.data[0]})
+                    this.setState({error: err.response.data[0]})
                 } else {
                     this.setState({error: "Something went wrong!"})
                 }
@@ -164,69 +156,24 @@ export default class AdminAccount extends Component {
         })
     }
 
-    formSubmit = (e) => {
-        e.preventDefault();
-        if(getFromStorage("user")) {
-            if(!getFromStorage("user").user.is_admin) {
-                refreshToken()
-                this.setState({isSubmitting: true}, () => {
-                    const headers = getHeaders();
-
-                    const data = {
-                        university: this.state.university,
-                        business: this.state.business,
-                        organization: this.state.organization,
-                        privilege: this.state.privilege.trim() !== "" ? parseInt(this.state.privilege) : 0,
-                    }
-
-                    var temp = Object.assign({}, data);
-
-                    if(this.state.admin_type === "organization") {
-                        delete temp.university;
-                        delete temp.business;
-                    } else if(this.state.admin_type === "university") {
-                        delete temp.organization;
-                        delete temp.business;
-                    } else {
-                        delete temp.university;
-                        delete temp.organization;
-                    }
-
-                    axios
-                    .post(url, temp, headers)
-                    .then(res => this.setState({
-                        isSubmitting: false, 
-                        error: "", 
-                        success: "Form submitted successfully",
-                        university: "",
-                        business: "",
-                        organization: "",
-                        admin_type: "",
-                        privilege: "",
-                        user: "", 
-                        users: []
-                    }))
-                    .catch(err => this.setState({isSubmitting: false, success: ""},() => {
-                        if(err.response) {
-                            this.setState({error: err.response.data[0]})
-                        } else {
-                            this.setState({error: "Something went wrong!"})
-                        }
-                    }))
-                })
-            } else {
-                this.createAdmin();
-            }
-        }
-    }
-
     validateForm = () => {
-        return this.state.privilege.length > 0 && this.state.user.length > 0 && this.state.admin_type.length > 0 && (this.state.admin_type === "organization" ? this.state.organization.length > 0 : this.state.admin_type === "university" ? this.state.university.length > 0 : this.state.business.length > 0);
+        return this.state.privilege.length > 0 && this.state.admin_type.length > 0 && (this.state.admin_type === "organization" ? this.state.organization.length > 0 : this.state.admin_type === "university" ? this.state.university.length > 0 : this.state.business.length > 0);
     }
 
     componentDidMount(){
-        this.searchUniversities()
-    }
+        this.setState({    
+            university: "",
+            business: "",
+            organization: "",
+            admin_type: "",
+            privilege: "",
+            success: "",
+            error: "",
+            searches: [],
+            isSubmitting: false,
+            users: []
+        })
+     }
 
     render() {
         const {isSubmitting} = this.state;
@@ -235,7 +182,7 @@ export default class AdminAccount extends Component {
         <>
             <Modal show={this.props.show} onHide={this.props.handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title style={{marginBottom: "-90px", color}}>Admin Account</Modal.Title>
+                    <Modal.Title style={{marginBottom: "-90px", color}}>Admin Request</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form 
@@ -244,18 +191,18 @@ export default class AdminAccount extends Component {
                     >
                         <div style={{backgroundColor: "white", paddingLeft: "10px", borderRadius: 10, paddingRight: "10px", overflowX: "auto"}}>
                             <br/>
-                            {/* {
+                            {
                                 this.state.success.length > 0 && 
                                 <Alert variant="success" style={{fontSize: "12px"}}>
                                     {this.state.success}
                                 </Alert>
-                            } */}
-                            {/* {
+                            }
+                            {
                                 this.state.error.length > 0 && 
                                 <Alert variant="danger" style={{fontSize: "12px"}}>
                                     {this.state.error}
                                 </Alert>
-                            } */}
+                            }
                             {
                                 getFromStorage("user") ? !getFromStorage("user").user.is_account_setup &&
                                 <Alert variant="danger" style={{fontSize: "12px"}}>
@@ -296,17 +243,6 @@ export default class AdminAccount extends Component {
                                     .map((item, i) => <option key={item} value={i}>{item}</option>)}
                                 </FormControl>
                             </FormGroup>
-                            {getFromStorage("user") && getFromStorage("user").user.is_admin &&
-                                <FormGroup controlId="user" bssize="large" style={{textAlign: "left"}}>
-                                    <FormLabel>User<span style={{color:"red"}}>*</span></FormLabel>
-                                    <ReactLiveSearch
-                                        value={this.state.user}
-                                        onChange={(value) => { this.setState({user: value}, () => this.searchUsers()) }}
-                                        onSelect={() => {}}
-                                        data={this.state.users}
-                                    />
-                                </FormGroup>
-                            }
                             {this.state.admin_type !== "" &&
                                 <div>
                                     {this.state.admin_type === "university" &&

@@ -25,7 +25,7 @@ function Login(props) {
       if(!refreshToken()) {
         verifyToken();
       } else {
-        props.history.replace("/create_event")
+        props.history.replace("/home")
       }
     }
     else {
@@ -40,14 +40,15 @@ function Login(props) {
     axios
     .post(verifyURL, data)
     .then(res => {
-        props.history.replace("/create_event")
+        props.history.replace("/home")
     })
     .catch(err => {
       if(err.toString().includes("400") || !getFromStorage("user")){
+        removeFromStorage("username")
         removeFromStorage("user")
         setIsLoading(false)
       } else {
-        props.history.replace("/create_event")
+        props.history.replace("/home")
       }
     })
   }
@@ -70,8 +71,10 @@ function Login(props) {
       setPassword("");
       setError("");
       setIsSubmitting(false);
+      setInStorage("username", {username: res.data.user.username, type: "profile", privilege: -1});
+      
       setInStorage("user", res.data);
-      props.history.replace("/create_event")
+      props.history.replace("/home")
     })
     .catch(err => {
       setError("Email or Password incorrect");

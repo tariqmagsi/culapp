@@ -35,13 +35,13 @@ function Signup(props) {
     axios
     .post(verifyURL, data)
     .then(res => {
-        props.history.replace("/create_event")
+        props.history.replace("/home")
     })
     .catch(err => {
         if(err.toString().includes("400") || !getFromStorage("user")){
             setIsLoading(false)
         } else {
-            props.history.replace("/create_event")
+            props.history.replace("/home")
         }
     })
   }

@@ -2,6 +2,7 @@ import styled from 'styled-components'
 
 const LiveSearch = styled.div`
   position: relative;
+  background: white;
 `
 
 const Items = styled.ul`
@@ -11,9 +12,10 @@ const Items = styled.ul`
   border-radius: 3px;
   box-sizing: border-box;
   overflow-y: auto;
-  position: absolute;
+  position: relative;
   padding: 0;
   margin: 0;
+  background: white;
 `
 
 const Item = styled.li`

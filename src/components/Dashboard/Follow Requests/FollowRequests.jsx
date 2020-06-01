@@ -34,16 +34,30 @@ class FollowRequests extends Component {
     declineFollowRequest = (uri) => {
         const headers = getHeaders();
         axios
-        .delete(url + `${uri}/`, headers)
-        .then(res => this.setState({ error: "" }))
+        .delete(url + `approve-or-delete/${uri}/`, headers)
+        .then(res => this.setState({ error: "" }, () => {
+            if(this.state.next) 
+                this.fetchFollowRequests(this.state.next)
+            else if(this.state.previous)
+                this.fetchFollowRequests(this.state.previous)
+            else
+                this.fetchFollowRequests(url)
+        }))
         .catch(err => this.setState({error: "Something Went Wrong"}))
     }
 
     acceptFollowRequest = (uri) => {
         const headers = getHeaders();
         axios
-        .post(url + `${uri}/`, {}, headers)
-        .then(res => this.setState({ error: "" }))
+        .post(url + `approve-or-delete/${uri}/`, {}, headers)
+        .then(res => this.setState({ error: "" }, () => {
+            if(this.state.next) 
+                this.fetchFollowRequests(this.state.next)
+            else if(this.state.previous)
+                this.fetchFollowRequests(this.state.previous)
+            else
+                this.fetchFollowRequests(url)
+        }))
         .catch(err => this.setState({error: "Something Went Wrong"}))
     }
 
@@ -101,10 +115,10 @@ class FollowRequests extends Component {
                                             <div style={{color: "gray", fontSize: "12px"}}>{item.user_username}</div>
                                             
                                             <div className="notification">
-                                                <Button type="submit" style={{background: color, borderColor: color, width: "auto", marginLeft: "auto", marginRight: "auto", fontSize: "12px"}} className="notification" variant="dark" size="sm">
+                                                <Button onClick={() => this.acceptFollowRequest(item.uri)} style={{background: color, borderColor: color, width: "auto", marginLeft: "auto", marginRight: "auto", fontSize: "12px"}} className="notification" variant="dark" size="sm">
                                                     Accept
                                                 </Button>
-                                                <Button type="submit" style={{ width: "auto", marginLeft: "10px", marginRight: "auto", fontSize: "12px"}} className="notification" variant="light" size="sm">
+                                                <Button onClick={() => this.declineFollowRequest(item.uri)} style={{ width: "auto", marginLeft: "10px", marginRight: "auto", fontSize: "12px"}} className="notification" variant="light" size="sm">
                                                     Delete
                                                 </Button>
                                             </div>

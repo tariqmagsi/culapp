@@ -116,7 +116,8 @@ export default class Profile extends Component {
                 files: [],
                 base64: "",
                 success: name === "uploaded" ? "Image Uploaded Successfully" : "Profile Updated Successfully",
-                error: ""
+                error: "",
+                profile_photo: res.data.profile_photo,
             })
         })
         .catch(err => {
@@ -148,11 +149,11 @@ export default class Profile extends Component {
 
         return (
             <div>
-                <ProfileModal show={this.state.show} base64={this.state.base64} handleShow={() => this.setState({show: true})} setFile={this.setFile} handleClose={() => this.setState({show: false}, () => {this.setFile([])})} closeHandle={() => this.setState({show: false})} uploadImage={() => this.setState({show: false}, () => {this.postRequest("uploaded")})}/>
+                <ProfileModal show={this.state.show} base64={this.state.base64} handleShow={() => this.setState({show: true})} setFile={this.setFile} handleClose={() => this.setState({show: false}, () => {this.setFile([])})} closeHandle={() => this.setState({show: false})} uploadImage={() => this.setState({show: false}, () => {this.postRequest("upload")})}/>
                 <Helmet bodyAttributes={{style: 'background : #eee !important'}}/>
                 <Sidebar isOpened={this.props.isOpened} changeState={this.props.changeState}/>
                 <div style={{marginLeft: window.innerWidth > 600 ? (this.props.isOpened ? "200px" : "55px") : "55px",  color: "black", paddingTop: "50px", paddingLeft: "10px", overflowX: "auto"}}>
-                    <h1 style={{color, marginLeft: "20px"}}>Profile</h1>
+                    <h3 style={{color, marginLeft: "20px"}}>Profile</h3>
                     {!isLoading ?
                     <form 
                         style={{marginRight: "20px", fontSize: "14px", paddingLeft: "20px"}} 

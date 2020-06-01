@@ -68,7 +68,7 @@ class EventList extends Component {
                     {!this.state.isLoading ?
                     <div style={{ borderRadius: 10, marginRight: "20px", marginLeft: "10px"}}>
                     {this.state.eventsList.map(item =>
-                    <div key={item.slug} className="ma2 pa0 v-top dib Cards" style={{cursor: "pointer", background:  "white", width: "100%", borderBottom: "0.5px solid #eee", borderRadius: 10, }} onClick={() => this.props.history.push(`/event/${item.slug}`)}>
+                    <div key={item.slug} className="ma2 pa0 v-top dib Cards" style={{cursor: "pointer", background:  "white", width: "100%", borderBottom: "0.5px solid #eee", borderRadius: 10, }} onClick={() => this.props.history.push(`/event_list/event/${item.slug}`)}>
                         <div className="ma0 pa0 dib v-top">
                             <table>
                                 <tbody>

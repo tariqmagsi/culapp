@@ -25,5 +25,9 @@
     "SEARCH_BUSINESS": "/search/business/",
     "SEARCH_ORGANIZATIONS": "/search/organizations/",
     "ADMIN_REQUESTS": "/management/my-admin-requests/",
-    "ADMIN_APPROVE_REQUESTS": "/management/admin-request/approve-or-delete/"
+    "ADMIN_APPROVE_REQUESTS": "/management/admin-request/approve-or-delete/",
+    "UPDATE_ADMINS": "/management/update/",
+    "MARK_AS_READ": "/account/notifications/mark-as-read/",
+    "MARK_ALL_AS_READ": "/account/notifications/mark-all-as-read/",
+    "SUBSCRIPTION": "/payment/subscriptions/"
 }

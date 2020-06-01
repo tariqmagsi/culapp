@@ -14,12 +14,17 @@ import { CalendarToday } from '@material-ui/icons';
 import { refreshToken } from '../../../PrivateRoute/isLogin';
 import Files from "react-butterfiles";
 import ReactTags from 'react-tag-autocomplete'
+import img from "../../../image/user.png"
 import { getHeaders } from '../../../utils/headers';
+import ReactLiveSearch from '../../Sidebar/ReactLiveSearch';
 
 const color = "#229a88";
 const url = Api.BASE_URL + Api.CREATE_EVENT_API;
 const categoriesUrl = Api.BASE_URL + Api.EVENT_CATEGORIES;
 const usersUrl = Api.BASE_URL + Api.SEARCH_USERS;
+const searchUniversitiesUrl = Api.BASE_URL + Api.SEARCH_UNIVERSITIES 
+const searchOrganizationsUrl = Api.BASE_URL + Api.SEARCH_ORGANIZATIONS 
+const searchBusinessUrl = Api.BASE_URL + Api.SEARCH_BUSINESS 
 
 export default class CreateEvent extends Component {
     state = {
@@ -64,8 +69,85 @@ export default class CreateEvent extends Component {
         base64: "",
         success: "",
         search: "",
-        tags: []
+        tags: [],
+        universities: [],
+        businesses: [],
+        organizations: []
     }
+
+    searchUniversities = () => {
+        const headers = getHeaders();
+
+        axios
+        .get(searchUniversitiesUrl + `?q=${this.state.university_username}`, headers)
+        .then(res => this.setState({ universities: res.data.results.map((result, i) => ({ 
+            label: <div>
+                    {result.profile_photo ? <img src={result.profile_photo} style={{ width: "30px", height: "30px"}} alt="search"/> : 
+                    <img src={img} style={{ width: "30px", height: "30px"}} alt="search"/>}
+                    <span style={{marginLeft: "10px"}}>{result.name + " (" + result.username + ") "}</span>
+                   </div>, 
+            value: result.username})) }))
+        .catch(err => {
+            if(err.response) {
+                if(err.response.data.length > 0) {
+                    this.setState({error: err.response.data[0]})
+                } else {
+                    this.setState({error: "Something went wrong"})
+                }
+            } else {
+                this.setState({error: "Something went wrong"})
+            }
+        })
+    }
+
+    searchOrganizations = () => {
+        const headers = getHeaders();
+
+        axios
+        .get(searchOrganizationsUrl + `?q=${this.state.organization_username}`, headers)
+        .then(res => this.setState({ organizations: res.data.results.map((result, i) => ({ label: 
+            <div>
+            {result.profile_photo ? <img src={result.profile_photo} style={{ width: "30px", height: "30px"}} alt="search"/> : 
+            <img src={img} style={{ width: "30px", height: "30px"}} alt="search"/>}
+            <span style={{marginLeft: "10px"}}>{result.name + " (" + result.username + ") "}</span>
+           </div>, value: result.username})) }, () => console.log(res.data)))
+        .catch(err => {
+            if(err.response) {
+                if(err.response.data.length > 0) {
+                    this.setState({error: err.response.data[0]})
+                } else {
+                    this.setState({error: "Something went wrong"})
+                }
+            } else {
+                this.setState({error: "Something went wrong"})
+            }
+        })
+    }
+
+    searchBusiness = () => {
+        const headers = getHeaders();
+
+        axios
+        .get(searchBusinessUrl + `?q=${this.state.business_username}`, headers)
+        .then(res => this.setState({ businesses: res.data.results.map((result, i) => ({ label: 
+            <div>
+            {result.profile_photo ? <img src={result.profile_photo} style={{ width: "30px", height: "30px"}} alt="search"/> : 
+            <img src={img} style={{ width: "30px", height: "30px"}} alt="search"/>}
+            <span style={{marginLeft: "10px"}}>{result.name + " (" + result.username + ") "}</span>
+           </div>, value: result.username})) }))
+        .catch(err => {
+            if(err.response) {
+                if(err.response.data.length > 0) {
+                    this.setState({error: err.response.data[0]})
+                } else {
+                    this.setState({error: "Something went wrong"})
+                }
+            } else {
+                this.setState({error: "Something went wrong"})
+            }
+        })
+    }
+
 
     handleDelete = (i) => {
         const tags = this.state.tags.slice(0)
@@ -123,7 +205,7 @@ export default class CreateEvent extends Component {
                 end_time: this.state.endDate.toISOString(),
                 university_username: this.state.university_username,
                 organization_username: this.state.organization_username,
-                invited_guest_usernames: this.state.tags.length > 0 ? this.state.tags.map(name => name.name) : [],
+                invited_guests: this.state.tags.length > 0 ? this.state.tags.map(name => name.name) : [],
                 visibility_scope: parseInt(this.state.visibility_scope),
                 free_food_and_drinks: this.state.free_food_and_drinks,
                 food_offered: this.state.food_offered,
@@ -191,7 +273,7 @@ export default class CreateEvent extends Component {
                 formData.append("free_until", temp.free_until)
             formData.append("start_time", temp.start_time)
             formData.append("end_time", temp.end_time)
-            formData.append("invited_guests",temp.invited_guest_usernames)
+            formData.append("invited_guests",temp.invited_guests)
             formData.append("visibility_scope", temp.visibility_scope)
             formData.append("free_food_and_drinks", temp.free_food_and_drinks)
             formData.append("food_offered", temp.food_offered)
@@ -252,6 +334,7 @@ export default class CreateEvent extends Component {
                     console.log(res.data)
             })
             .catch(err => {
+                console.log(err.response)
                 if(err.response) {
                     if(err.response.data.start_time) {
                         this.setState({error: err.response.data.start_time})
@@ -515,14 +598,6 @@ export default class CreateEvent extends Component {
                             <Form.Row>
                                 <FormGroup as={Col} sm="12" controlId="invited_guest_usernames" bssize="large" style={{textAlign: "left"}}>
                                     <FormLabel>Invited Guest Usernames</FormLabel>
-                                    {/* <FormControl
-                                        name="invited_guest_usernames"
-                                        size="sm"
-                                        type="text"
-                                        placeholder="Invited Guest Usernames"
-                                        value={this.state.invited_guest_usernames}
-                                        onChange={this.whenChangeHandler}
-                                    /> */}
                                     <ReactTags
                                         tags={this.state.tags}
                                         suggestions={this.state.invited_guest_usernames}
@@ -536,36 +611,30 @@ export default class CreateEvent extends Component {
                             <Form.Row> 
                                 <FormGroup as={Col} sm="4" controlId="university_username" bssize="large" style={{textAlign: "left"}}>
                                     <FormLabel>University</FormLabel>
-                                    <FormControl
-                                        size="sm"
-                                        name="university_username"
-                                        type="text"
-                                        placeholder="University"
+                                    <ReactLiveSearch
                                         value={this.state.university_username}
-                                        onChange={this.whenChangeHandler}
+                                        onChange={(value) => { this.setState({university_username: value}, () => this.searchUniversities()) }}
+                                        onSelect={() => {}}
+                                        data={this.state.universities}
                                     />
                                 </FormGroup>
                                 <FormGroup as={Col} sm="4" controlId="orgnization_username" bssize="large" style={{textAlign: "left"}}>
                                     <FormLabel>Organization</FormLabel>
-                                    <FormControl
-                                        size="sm"
-                                        name="organization_username"
-                                        type="text"
-                                        placeholder="Organization"
-                                        value={this.state.organization_username}
-                                        onChange={this.whenChangeHandler}
+                                    <ReactLiveSearch
+                                        value={this.state.orgnization_username}
+                                        onChange={(value) => { this.setState({orgnization_username: value}, () => this.searchOrganizations()) }}
+                                        onSelect={() => {}}
+                                        data={this.state.organizations}
                                     />
                                 </FormGroup>
                                 
                                 <FormGroup as={Col} sm="4" controlId="business_username" bssize="large" style={{textAlign: "left"}}>
                                     <FormLabel>Business</FormLabel>
-                                    <FormControl
-                                        size="sm"
-                                        name="business_username"
-                                        type="text"
-                                        placeholder="Business"
+                                    <ReactLiveSearch
                                         value={this.state.business_username}
-                                        onChange={this.whenChangeHandler}
+                                        onChange={(value) => { this.setState({business_username: value}, () => this.searchBusiness()) }}
+                                        onSelect={() => {}}
+                                        data={this.state.businesses}
                                     />
                                 </FormGroup>
                             </Form.Row>

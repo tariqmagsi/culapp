@@ -33,8 +33,7 @@ export default class ReactLiveSearch extends Component {
   handleItemSelect = value => {
     const { data, onSelect } = this.props
     const selected = true
-
-    this.handleValueChange(data.find(item => item.value === value)['label'])
+    this.handleValueChange(data.find(item => item.value === value)['value'])
     this.setState({ selected })
     onSelect(selected)
   }
@@ -67,13 +66,14 @@ export default class ReactLiveSearch extends Component {
     const { value, data, itemStyle } = this.props
     const { selected, cursor } = this.state
 
-    this.filteredData = data.filter(item => item.label.includes(value))
+    this.filteredData = data.filter(item => item.label)
 
     return (
       <LiveSearch>
         <div>
           <FormControl
             type='text'
+            size="sm"
             value={value}
             placeholder="Search"
             onChange={e => this.handleValueChange(e.target.value)}

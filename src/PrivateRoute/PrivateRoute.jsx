@@ -6,9 +6,9 @@ import { isLogin } from './isLogin';
 export const PrivateRoute = ({ children }) => {
     if (!isLogin()) {
         if(!getFromStorage("isLoggedIn"))
-            return <Redirect to="/" />;
-        else if(window.location.pathname === "/" || window.location.pathname === "/signup") 
-            return <Redirect to="/create_event" />
+            return <Redirect to="/login" />;
+        // else if(window.location.pathname === "/login") 
+        //     return <Redirect to="/home" />
     }
   
     return children;
